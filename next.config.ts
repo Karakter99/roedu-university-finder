@@ -1,15 +1,9 @@
-import type { NextConfig } from "next";
-
-const nextConfig: NextConfig = {
-  // 1. Tells Next.js to produce a static 'out' folder for Firebase
-
-  // 2. Disables Image Optimization (required for static export)
+/** @type {import('next').NextConfig} */
+const nextConfig = {
+  output: "export", // <--- THIS IS CRITICAL FOR FIREBASE
   images: {
-    unoptimized: true,
+    unoptimized: true, // <--- Required for 'next/image' in static export
   },
-
-  // 3. Creates folders (e.g., /about/index.html) to fix the "404" error on Firebase
-  trailingSlash: true,
 };
 
-export default nextConfig;
+module.exports = nextConfig;

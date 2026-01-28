@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
+import Image from "next/image";
 import { db } from "../lib/firebase";
 import { collection, getDocs } from "firebase/firestore";
 
@@ -147,13 +148,14 @@ export default function UniversitiesPage() {
               {/* --- IMAGE SECTION --- */}
               {/* UPDATED: h-48 on mobile, h-56 on desktop */}
               <div className="h-48 md:h-56 w-full relative overflow-hidden bg-gray-200">
-                <img
+                <Image
                   src={
                     uni.image ||
                     "https://images.unsplash.com/photo-1541339907198-e08756dedf3f"
                   }
                   alt={uni.name}
-                  className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-700"
+                  fill
+                  className="object-cover transform group-hover:scale-110 transition-transform duration-700"
                 />
 
                 <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent"></div>
@@ -178,8 +180,9 @@ export default function UniversitiesPage() {
 
                 {/* Button */}
                 <a
+                  // ✅ CORRECT: We manually encode the ID here too
                   href={`/universities/${encodeURIComponent(uni.id)}`}
-                  className="w-full block text-center bg-red-600 text-white font-bold py-3 md:py-3.5 rounded-xl hover:bg-red-700 hover:shadow-lg transform active:scale-95 transition-all uppercase text-xs md:text-sm tracking-wide"
+                  className="w-full block text-center bg-red-600..."
                 >
                   View Programs
                 </a>
