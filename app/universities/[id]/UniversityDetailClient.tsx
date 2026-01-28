@@ -2,9 +2,11 @@
 
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 import { db } from "@/app/lib/firebase";
 import { doc, getDoc, collection, getDocs } from "firebase/firestore";
 
+// ... [Keep your Interfaces Program and University here] ...
 interface Program {
   id: string;
   name: string;
@@ -22,39 +24,57 @@ interface University {
   description: string;
 }
 
-// Accept ID as a prop from the Server Page
 export default function UniversityDetailClient({ id }: { id: string }) {
   const router = useRouter();
 
-  // Clean ID (just in case)
-  const cleanId = id ? decodeURIComponent(id) : "";
+  // 🛠️ CRITICAL FIX: Properly decode the ID to match Firebase format
+  // "Agora%20University" -> "Agora University"
+  const cleanId = React.useMemo(() => {
+    try {
+      return id ? decodeURIComponent(id) : "";
+    } catch {
+      console.error("Failed to decode ID:", id);
+      return id; // Fallback to raw ID
+    }
+  }, [id]);
 
   const [university, setUniversity] = useState<University | null>(null);
   const [programs, setPrograms] = useState<Program[]>([]);
   const [loading, setLoading] = useState(true);
 
-  // Filter States
+  // ... [Keep your Filter States here] ...
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedLevel, setSelectedLevel] = useState("All");
   const [selectedLanguage, setSelectedLanguage] = useState("All");
 
   useEffect(() => {
+    if (!cleanId) return;
+
     const fetchData = async () => {
-      if (!cleanId) return;
       try {
         setLoading(true);
+        console.log("🔍 Looking for Firestore Doc ID:", cleanId);
+
+        // 1. Get University
         const uniDoc = await getDoc(doc(db, "universities", cleanId));
 
         if (uniDoc.exists()) {
           setUniversity(uniDoc.data() as University);
+
+          // 2. Get Programs
           const progSnap = await getDocs(
             collection(db, "universities", cleanId, "programs"),
           );
-          setPrograms(
-            progSnap.docs.map((d) => ({ id: d.id, ...d.data() }) as Program),
-          );
+
+          const progData = progSnap.docs.map((d) => ({
+            id: d.id,
+            ...d.data(),
+          })) as Program[];
+
+          setPrograms(progData);
         } else {
-          console.error("University not found:", cleanId);
+          console.error("❌ Doc not found. ID used:", cleanId);
+          setUniversity(null);
         }
       } catch (e) {
         console.error("Error loading data:", e);
@@ -65,17 +85,22 @@ export default function UniversityDetailClient({ id }: { id: string }) {
     fetchData();
   }, [cleanId]);
 
+  // ... [Keep your Render Logic exactly as it was] ...
+
+  // 1. Loading State
   if (loading)
     return (
-      <div className="min-h-screen flex items-center justify-center text-gray-400 font-bold">
+      <div className="min-h-screen flex items-center justify-center font-bold text-gray-400">
         Loading...
       </div>
     );
 
+  // 2. Not Found State
   if (!university)
     return (
       <div className="min-h-screen flex flex-col items-center justify-center gap-4">
-        <div className="text-2xl font-bold">University Not Found</div>
+        <h1 className="text-2xl font-bold">University Not Found</h1>
+        <p className="text-gray-500">Could not find ID: {cleanId}</p>
         <button
           onClick={() => router.push("/universities")}
           className="bg-blue-600 text-white px-6 py-2 rounded"
@@ -85,7 +110,7 @@ export default function UniversityDetailClient({ id }: { id: string }) {
       </div>
     );
 
-  // --- Filter Logic ---
+  // 3. Filter Logic (Copy-paste your previous filter logic here)
   const uniqueLevels = [
     "All",
     ...Array.from(new Set(programs.map((p) => p.degreeType)))
@@ -120,17 +145,17 @@ export default function UniversityDetailClient({ id }: { id: string }) {
     {} as Record<string, Program[]>,
   );
 
-  // --- Render ---
   return (
     <div className="min-h-screen bg-gray-50 pb-20">
       {/* HEADER HERO */}
       <div className="h-[50vh] w-full overflow-hidden relative bg-gray-900">
-        <img
+        <Image
           src={
             university.image ||
             "https://images.unsplash.com/photo-1541339907198-e08756dedf3f"
           }
           alt={university.name}
+          fill
           className="w-full h-full object-cover opacity-60"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-gray-900 via-transparent to-transparent"></div>

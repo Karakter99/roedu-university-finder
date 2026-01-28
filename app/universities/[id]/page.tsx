@@ -1,29 +1,15 @@
-import { db } from "@/app/lib/firebase";
-import { collection, getDocs } from "firebase/firestore";
-import UniversityDetailClient from "./UniversityDetailClient";
+import React from "react";
+import UniversityDetailClient from "./UniversityDetailClient"; // Verify path
 
-// 1. GENERATE STATIC PARAMS (Run at Build Time)
-export async function generateStaticParams() {
-  // Queries Firebase to get all University IDs so Next.js can build pages for them
-  try {
-    const snapshot = await getDocs(collection(db, "universities"));
-    return snapshot.docs.map((doc) => ({
-      id: doc.id,
-    }));
-  } catch (e) {
-    console.error("Error generating static params:", e);
-    return [];
-  }
+// ⚠️ Next.js 15: params is a Promise
+interface PageProps {
+  params: Promise<{ id: string }>;
 }
 
-// 2. THE PAGE COMPONENT
-export default async function Page({
-  params,
-}: {
-  params: Promise<{ id: string }>;
-}) {
-  // In Next.js 15+, params is a Promise. We await it.
+export default async function UniversityPage({ params }: PageProps) {
+  // 1. Await the params to get the actual ID object
   const resolvedParams = await params;
 
+  // 2. Pass the raw ID (e.g., "Agora%20University...") to the client
   return <UniversityDetailClient id={resolvedParams.id} />;
 }

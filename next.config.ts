@@ -2,7 +2,6 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   // 1. Tells Next.js to produce a static 'out' folder for Firebase
-  output: "export",
 
   // 2. Disables Image Optimization (required for static export)
   images: {
