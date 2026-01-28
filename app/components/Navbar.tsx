@@ -31,6 +31,12 @@ const Navbar = () => {
         {/* 2. Desktop Links */}
         <div className="hidden md:flex items-center gap-8 text-base font-medium text-gray-600">
           <Link href="/" className="hover:text-dark transition-colors">
+            Main Menu
+          </Link>
+          <Link
+            href="/life"
+            className="text-gray-600 hover:text-dark font-medium transition-colors"
+          >
             Student Life
           </Link>
           <Link
@@ -39,6 +45,7 @@ const Navbar = () => {
           >
             Universities
           </Link>
+
           <Link href="/contact" className="hover:text-dark transition-colors">
             Contact
           </Link>
