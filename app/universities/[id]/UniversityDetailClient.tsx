@@ -31,10 +31,21 @@ export default function UniversityDetailClient({ id }: { id: string }) {
   // "Agora%20University" -> "Agora University"
   const cleanId = React.useMemo(() => {
     try {
-      return id ? decodeURIComponent(id) : "";
+      // Keep decoding until the string stops changing (handles double/triple encoding)
+      let decoded = id;
+      let prev = "";
+      while (prev !== decoded) {
+        prev = decoded;
+        try {
+          decoded = decodeURIComponent(decoded);
+        } catch {
+          break;
+        }
+      }
+      return decoded;
     } catch {
       console.error("Failed to decode ID:", id);
-      return id; // Fallback to raw ID
+      return id;
     }
   }, [id]);
 

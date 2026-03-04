@@ -181,7 +181,7 @@ export default function UniversitiesPage() {
                 {/* Button */}
                 <a
                   // ✅ CORRECT: We manually encode the ID here too
-                  href={`/universities/${encodeURIComponent(uni.id)}`}
+                  href={`/universities/${uni.id}`}
                   className="w-full block text-center bg-red-600..."
                 >
                   View Programs
