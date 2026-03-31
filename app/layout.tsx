@@ -14,6 +14,9 @@ const playfair = Playfair_Display({
 export const metadata = {
   title: "RoEduBridge",
   description: "Connecting students to Romanian Universities",
+  verification: {
+    google: "google794b25cbc82073b7.html", // Just the random string from the "content" part
+  },
 };
 
 export default function RootLayout({
